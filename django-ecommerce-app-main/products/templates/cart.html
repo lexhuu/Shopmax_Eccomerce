@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container pt-3 min-vh-100">
+    <!-- Add the following code snippet to display messages -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <!-- End of messages code -->
+
+    <h4>Cart</h4>
+    <hr class="hr" />
+
+    {% if products %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th class="col">Product</th>
+                <th class="col">Price</th>
+                <th class="col">Quantity</th>
+                <th class="col">Total</th>
+                <th class="col">Operation</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in products %}
+            <tr>
+                <td>
+                    <a class="text-decoration-none text-primary" href="{% url 'product' item.product.pk %}">{{ item.product.name }}</a>
+                </td>
+                <td>${{ item.product.price }}</td>
+                <td>
+                    <span class="input-group-btn">
+                        <a class="text-decoration-none btn btn-sm btn-outline-danger" href="{% url 'cart_quantity' item.pk %}?action=remove">-</a>
+                    </span>
+                    <span type="text" id="quantity" name="quantity">{{ item.quantity }}</span>
+                    <span class="input-group-btn">
+                        <a class="text-decoration-none btn btn-sm btn-outline-success" href="{% url 'cart_quantity' item.pk %}?action=add">+</a>
+                    </span>
+                </td>
+                <td>${{ item.get_total }}</td>
+                <td><a class="text-decoration-none text-danger" href="{% url 'cart_action' item.pk %}?action=remove">Remove</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form method="POST" action="{% url 'cart' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Display errors for each field -->
+        {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="card my-2">
+            <div class="card-body">
+                <h4>Delivery method:</h4>
+                <hr class="hr" />
+                <select name="delivery_method_order" class="form-select">
+                    <option value="1" selected>Courier delivery</option>
+                    <option value="2">Pickup at a parcel locker</option>
+                    <option value="3">Personal pickup</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card my-2">
+            <div class="card-body">
+                <h4>Payment method:</h4>
+                <hr class="hr" />
+                <select name="payment_method_order" class="form-select">
+                    <option value="1" selected>Cash/card payment on delivery</option>
+                    <option value="2">Online payment by credit card</option>
+                    <option value="3">Traditional money transfer</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card my-2">
+            <div class="card-body">
+                <h4>Shipping information:</h4>
+                <hr class="hr" />
+                {{ form.as_p }}
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <p>Total: ${{ cart_total|floatformat:2 }}</p>
+                <button class="btn btn-outline-success">Submit</button>
+            </div>
+        </div>
+    </form>
+    {% else %}
+    <span>Cart is empty.</span>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container pt-3 min-vh-100">
+    <div class="my-3">
+        <a href="{% url 'logout' %}" class="btn btn-outline-danger">Logout</a>
+        <a href="{% url 'password_change' %}" class="btn btn-outline-warning">Change password</a>
+    </div>
+
+    <h4>My profile</h4>
+    <hr class="hr" />
+    <form method="POST" action="{% url 'profile' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-outline-success">Change</button>
+    </form>
+
+    <h4 class="pt-3">My orders</h4>
+    <hr class="hr" />
+    {% for item in page %}
+    <div class="card my-3">
+        <div class="card-body">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'user_order' item.pk %}">Order number: #{{ item.pk }}</a>
+            <span>- {{ item.date_time_order }}</span>
+        </div>
+    </div>
+    {% empty %}
+    <span>Your order history is empty.</span>
+    {% endfor %}
+
+    {% if page %}
+    <nav aria-label="pagination">
+        <ul class="pagination justify-content-center">
+            {% if page.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a></li>
+            {% endif %} 
+
+            <li class="page-item"><a class="page-link" href="#">{{ page.number }} of {{ page.paginator.num_pages}}</a></li>
+
+            {% if page.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ page.paginator.num_pages }}">Last</a></li>
+            {% endif %} 
+        </ul>
+    </nav>
+    {% endif %}
+
+</div>
+{% endblock %}

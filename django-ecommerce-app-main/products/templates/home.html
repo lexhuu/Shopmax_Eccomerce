@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .gray{
+    color: rgb(83, 80, 80);
+    padding-left: 300px;
+    
+}
+.aksa{
+    background-color: #ffffff;
+    text-align: center;
+    padding-top: 200px;
+    padding-bottom: 100px;
+    padding-left: 200px;
+    
+  }
+   .footer h5 {
+        color: #343a40; /* Choose your desired text color */
+        margin-bottom: 10px;
+    }
+
+    .footer p {
+        color: #6c757d; /* Choose your desired text color */
+    }
+
+    .footer a {
+        color: #007bff; /* Choose your desired link color */
+        text-decoration: none;
+</style>
+
+<header class="header">
+    <img src="static/images/pexels01.jpeg" class="img-fluid w-100 d-flex justify-content-center align-items-center">
+</header>
+<div class="container pt-3 min-vh-100">
+    <h4>Discover the collections</h4>
+    <hr class="hr" />
+    <div class="row card-group">
+        {% for item in products %}
+        <div class="col-3 my-3">
+            <div class="card h-100">            
+                <img src="{{ item.image.url }}" alt="image" class="card-img-top" style="height: 200px;">
+                <div class="card-body">
+                    <ul class="list-inline">
+                        <li><a class="card-title text-decoration-none">{{ item.name }}</a></li>
+                        <li><small class="text-muted">{{ item.category }}</small></li>
+                    </ul>
+                </div>
+                
+                <div class="card-footer d-flex justify-content-between">
+                    <div>
+                        <a class="btn btn-sm btn-outline-primary" href="{% url 'cart_action' item.pk %}?action=add">Add to cart</a>
+                        <a class="btn btn-sm btn-outline-success" href="{% url 'product' item.pk %}">View</a>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-primary">${{ item.price }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <span>Add a product using the admin panel and check is_recommended = True to make it appear here.</span>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="row aksa">
+    <div class="col">
+      <h4>ABOUT US</h4>
+      <h6 style="color: rgb(83, 80, 80);">Lorem ipsum dolor sit amet, consectetur adipisicing <br> Fugiat deleniti placeat, commodi magnam officia <br>quia corrupti eaque illum quae debitis,quam </h6>
+    </div>
+    <div class="col gray">
+      <h4 style="color: black;">SHOPMAX</h4>
+      <h6>Features</h6>
+      <h6>Sell online</h6>
+      <h6>Shopping cart</h6>
+      <h6>Store builder</h6>
+     </div>
+  
+    <div class="col-md-6 text-md-right">
+        <h4 style="padding-left: 20px;">FOLLOW US</h4>
+        <a href="#" class="text-dark mx-2"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="text-dark mx-2"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="text-dark mx-2"><i class="fab fa-linkedin"></i></a>
+        <!-- Add more social media icons as needed -->
+    </div>
+   
+</div>
+
+
+ 
+{% endblock %}

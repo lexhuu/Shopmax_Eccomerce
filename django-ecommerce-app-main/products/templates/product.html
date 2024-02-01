@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container pt-3 min-vh-100">
+    <div class="card my-3">
+        <div class="col-xs-9 col-sm-11 d-flex justify-content-center">
+            <img class="card-img-top" src="{{ product.image.url }}" alt="image" style="max-height: 500px; max-width: 500px;">
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">{{ product.name }}</h4>
+            <p class="text-metud">{{ opinions_average_rating }} ({{ opinions_count }} opinions)</p>
+            {% if product.description %}
+            <p>Description: {{ product.description }}</p>
+            {% endif %}
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <p><a class="btn btn-sm btn-outline-primary" href="{% url 'cart_action' product.pk %}?action=add">Add to cart</a></p>
+            <p class="text-primary">Price: ${{ product.price }}</p>
+        </div>
+    </div>
+
+    <h4>Opinions</h4>
+    <hr class="hr" />
+
+    {% if not user_opinion %}
+    <form class="card my-1 bg-light" method="POST" action="{% url 'opinion' product.pk %}?action=add" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card-body">
+            <h6 class="text-muted">Add opinion</h6>
+            <hr class="hr" />
+            <div class="mb-3">
+                <label for="content">Content</label>
+                <textarea class="form-control" id="content" name="content" placeholder="Content"></textarea>
+              </div>
+              <label for="rating">Rating</label>
+              <select name="rating" class="form-select" id="rating" name="rating">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5" selected>5</option>
+              </select>
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <button class="btn btn-outline-primary">Add</button>
+        </div>
+    </form>
+     {% endif %}
+
+    {% for item in opinions %}
+    <div class="card my-1 bg-light">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <p class="text-muted">Rating: {{ item.rating }}</p>
+                {% if user_opinion.pk == item.pk %}
+                <form method="POST" action="{% url 'opinion' product.pk %}?action=remove" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-danger">Remove</button>
+                </form>
+                {% endif %}
+            </div>      
+            {% if item.content %}
+            <p class="text-muted">Content: {{ item.content }}</p>
+            {% endif %}
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+            <p class="text-muted"> {{ item.user.username }}</p>
+            <p class="text-muted">{{ item.created_date_time }}</p>
+        </div>
+    </div>
+    {% empty %}
+    <span>There are no opinions for this product.</span>
+    {% endfor %}
+</div>
+{% endblock %}

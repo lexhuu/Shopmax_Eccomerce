@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container pt-3 min-vh-100">
+    <h4>All categoires</h4>
+    <hr class="hr" />
+    {% for item in categories %}
+    <a class="btn btn-outline-primary my-1" href="{% url 'category_products' item.pk %}">{{ item.name }}</a>
+    {% empty %}
+    <span>Add at least one category in the database using the administration panel.</span>
+    {% endfor %}
+</div>
+{% endblock %}
